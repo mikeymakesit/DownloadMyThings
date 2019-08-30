@@ -9,8 +9,6 @@ import requests
 
 
 CONFIGFILE   = './config'
-MANIFESTFILE = 'things.json'
-THINGFILE    = 'thingdata.json'
 
 
 def getAuthedUrl(thisUrl, outFormat="bytes"):
@@ -120,6 +118,8 @@ config.read(CONFIGFILE)
 outDir = args.outdir
 apiUrl = config['main']['API_URL']
 authHeader = { "Authorization": "Bearer " + config['main']['ACCESS_TOKEN'] }
+manifestFile = outDir + "/" + config['main']['MANIFEST_FILE']
+thingFileName = config['main']['THING_FILE']
 
 # Create output directory if it doesn't exist
 checkMkDirs(outDir)
@@ -136,7 +136,7 @@ if thingList is None:
 
 # Dump pretty JSON Thing list to manifest file
 # Rewrite this file if it exists since there may be new/removed Things
-with open(outDir + "/" + MANIFESTFILE, "w") as MF:
+with open(manifestFile, "w") as MF:
 	MF.write(json.dumps(thingList, indent=4))
 
 
@@ -146,9 +146,9 @@ for thing in thingList:
     thingId = thing['id']
     print(thingId, flush=True)
 
-    # Store Thing data in THINGFILE in its directory
+    # Store Thing data in thingFileName in its directory
     # Rewrite this file if it exists since the Thing details may have changed
-    thingDataFile = outDir + "/" + str(thingId) + "/" + THINGFILE
+    thingDataFile = outDir + "/" + str(thingId) + "/" + thingFileName
     thingData = getAuthedUrl(apiUrl + "/things/" + str(thingId), "json") 
     checkMkDirs(outDir + "/" + str(thingId))
     with open(thingDataFile, "w") as TF:

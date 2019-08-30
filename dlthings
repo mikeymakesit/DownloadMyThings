@@ -25,7 +25,16 @@ accessToken = config['main']['ACCESS_TOKEN']
 
 
 # Get list of my Things
+# curl -s -X GET -H 'Authorization: Bearer TOKEN' 'https://api.thingiverse.com/users/me/things' | python3 -m json.tool
+
 
 
 # Download each Thing
+# curl -s -X GET -H 'Authorization: Bearer TOKEN' 'https://api.thingiverse.com/things/3831194'  | python3 -m json.tool
+
+# Get a download link for a thing
+# curl -s -X GET -H 'Authorization: Bearer TOKEN' 'https://api.thingiverse.com/things/3748005/package-url' | python3 -m json.tool
+
+# Download the thing ZIP file
+# curl -s 'https://thingiverse-production-new.s3.amazonaws.com/zipfiles/9a/c6/cb/67/b4/Altoids_tin_D&D_Spell_Tracker_(Wizard).zip?AWSAccessKeyId=AKIAJ4LU5KWCMM7WB7YA&Expires=1567010303&Signature=%2B90gj0Oq02MBR%2BECYam51%2FfJQJk%3D' -o thing.zip
 

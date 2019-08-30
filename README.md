@@ -11,12 +11,16 @@ The purpose of this tool is to enable the bulk download of all my Things I've po
 Given that this tool runs locally on your system, using an App Token works fine.
 
 1. Create an App at https://www.thingiverse.com/developers/my-apps
+
    I called mine "Download My Things"  
    Platform: Desktop  
    Leave your app unpublished  
    After creating, note your **App Token** which you need.
+
 2. Update your local config file with the issued App Token.
+
    **Note the App Token is a read-only secret and you probably don't want to share it**
+
 3. Run the tool!
 
 ```
@@ -49,7 +53,17 @@ Downloaded 0 objects for Thing 3831194
 ~> /Volumes/home/3D Printing/MyThings/3831194/photos/IMG_0858.jpeg
 ~> /Volumes/home/3D Printing/MyThings/3831194/photos/IMG_0860.jpeg
 Downloaded 0 photos for Thing 3831194
-
+2906890
+Wrote Thing metadata
++> /Volumes/home/3D Printing/MyThings/2906890/files/AAx7-Right.stl
++> /Volumes/home/3D Printing/MyThings/2906890/files/AAx7-Left.stl
+Downloaded 2 objects for Thing 2906890
++> /Volumes/home/3D Printing/MyThings/2906890/photos/IMG_0255.jpg
++> /Volumes/home/3D Printing/MyThings/2906890/photos/421c7ec582ae87588d75638676c1ac44.png
++> /Volumes/home/3D Printing/MyThings/2906890/photos/a114e9408e0ea96e12470b64c90c8b5f.png
++> /Volumes/home/3D Printing/MyThings/2906890/photos/IMG_0254.jpg
+Downloaded 4 photos for Thing 2906890
+Done!
 ```
 
 ## Notes

@@ -1,5 +1,4 @@
 [main]
-AUTH_URL        = https://www.thingiverse.com
 API_URL         = https://api.thingiverse.com
 MANIFEST_FILE   = things.json
 THING_FILE      = thingdata.json

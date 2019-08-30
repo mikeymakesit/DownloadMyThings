@@ -18,6 +18,6 @@ https://www.thingiverse.com/login/oauth/authorize?client_id=1b0592dcb5966d8142d7
 5. Run the tool to see your options and get downloading!
 
 ```
-./dlthings -h
+./dlthings -o /tmp/things
 ```
 

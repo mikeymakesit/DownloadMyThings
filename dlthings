@@ -3,38 +3,96 @@
 
 import argparse
 import configparser
+import json
+import os
 import requests
 
 
 CONFIGFILE = './config'
+MANIFESTFILE = 'things.json'
 
 
 # Read args from CLI
 parser = argparse.ArgumentParser()
-parser.add_argument("-o", "--outdir", nargs='?', default="/tmp", help="DIRECTORY to download things into")
+parser.add_argument(
+    "-o", "--outdir", 
+    nargs='?', 
+    default="/tmp", 
+    help="DIRECTORY to download things into"
+)
 args = parser.parse_args()
-
-print("Downloading Things to: {}".format(args.outdir))
-
 
 # Load from config
 config = configparser.ConfigParser()
 config.read(CONFIGFILE)
+
 apiUrl = config['main']['API_URL']
 accessToken = config['main']['ACCESS_TOKEN']
+authHeader = { "Authorization": "Bearer " + accessToken }
+outDir = args.outdir
+
+if not os.path.isdir(outDir):
+    print("Directory '{}' doesn't exist.  Bye!".format(outDir))
+    quit()
+print("Downloading Things to: {}".format(outDir))
+
+
+def getAuthedJson(thisUrl):
+    """ Fetch a URL and return None if failure, else return JSON data """
+    resp = requests.get(thisUrl, headers=authHeader)
+    if resp.status_code != 200:
+        print("Got code {} for URL {}".format(resp.status_code, thisUrl))
+        return None
+    return resp.json()
+
+
+def getFiles(thisThing):
+    """ Download object files for a given Thing """
+    # curl -s -X GET -H 'Authorization: Bearer TOKEN' 'https://api.thingiverse.com/things/3831190/files'
+    numFiles = 0
+
+    fileData = getAuthedJson(apiUrl + "/things/" + str(thisThing) + "/files")
+    if fileData is None:
+        print("Failed to get files for thing {}".format(thisThing))
+        return None
+
+    for thisFile in fileData:
+        fileName = thisFile['name']
+        fileUrl = thisFile['download_url']
+
+        # Requesting the d/l URL returns a 302 to a CDN URL
+
+    return numFiles
+        
 
 
 # Get list of my Things
-# curl -s -X GET -H 'Authorization: Bearer TOKEN' 'https://api.thingiverse.com/users/me/things' | python3 -m json.tool
+# curl -s -X GET -H 'Authorization: Bearer TOKEN' 'https://api.thingiverse.com/users/me/things'
+thingList = getAuthedJson(apiUrl + "/users/me/things")
+if thingList is None:
+    print("Failed to get Thing list, so quitting.  Bye!")
+    quit()
 
 
+# Dump pretty JSON Thing list to manifest file
+with open(outDir + "/" + MANIFESTFILE, "w") as MF:
+	MF.write(json.dumps(thingList, indent=4))
+del(resp)
 
-# Download each Thing
-# curl -s -X GET -H 'Authorization: Bearer TOKEN' 'https://api.thingiverse.com/things/3831194'  | python3 -m json.tool
 
-# Get a download link for a thing
-# curl -s -X GET -H 'Authorization: Bearer TOKEN' 'https://api.thingiverse.com/things/3748005/package-url' | python3 -m json.tool
+# Iterate over Things
+# curl -s -X GET -H 'Authorization: Bearer TOKEN' 'https://api.thingiverse.com/things/3831194'
+for thing in thingList:
+    thingId = thing['id']
+    print(thingId, flush=True)
 
-# Download the thing ZIP file
-# curl -s 'https://thingiverse-production-new.s3.amazonaws.com/zipfiles/9a/c6/cb/67/b4/Altoids_tin_D&D_Spell_Tracker_(Wizard).zip?AWSAccessKeyId=AKIAJ4LU5KWCMM7WB7YA&Expires=1567010303&Signature=%2B90gj0Oq02MBR%2BECYam51%2FfJQJk%3D' -o thing.zip
+    # Get object files for a thing
+    dlCount = getFiles(thingId)
+    print("Downloaded {} object files for Thing {}".format(dlCount, thingId))
+
+    # Get photos of a thing
+    dlCount = getPhotos(thingId)
+    print("Downloaded {} photos for Thing {}".format(dlCount, thingId))
+
+print("Done!")
 

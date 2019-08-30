@@ -93,7 +93,7 @@ def getPhotos(thisThing):
 
         with open(destDir + "/" + photoName, "wb") as outFile:
             outFile.write(thisPhotoContent)
-        print("-> {}".format(destDir + "/" + photoName), flush=True)
+        print("+> {}".format(destDir + "/" + photoName), flush=True)
         numPhotos += 1
 
     return numPhotos
@@ -102,6 +102,11 @@ def getPhotos(thisThing):
 # Read args from CLI
 parser = argparse.ArgumentParser()
 parser.add_argument(
+    "-u", "--user", 
+    default=None,
+    help="Thingiverse user whose Things you're downloading"
+)
+parser.add_argument(
     "-o", "--outdir", 
     nargs='?', 
     default="/tmp", 
@@ -109,29 +114,35 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
+
 # Load from config file
 config = configparser.ConfigParser()
 config.read(CONFIGFILE)
 
-
 # Script globals
+thingiverseUser = args.user
 outDir = args.outdir
 apiUrl = config['main']['API_URL']
-authHeader = { "Authorization": "Bearer " + config['main']['ACCESS_TOKEN'] }
+authHeader = { "Authorization": "Bearer " + config['main']['APP_TOKEN'] }
 manifestFile = outDir + "/" + config['main']['MANIFEST_FILE']
 thingFileName = config['main']['THING_FILE']
+
+# Bail if no user was specified
+if thingiverseUser is None:
+    print("You didn't specify a username.  Bye!")
+    quit()
+
+# Get list of my Things
+# curl -s -X GET -H 'Authorization: Bearer TOKEN' 'https://api.thingiverse.com/users/me/things'
+thingList = getAuthedUrl(apiUrl + "/users/" + thingiverseUser + "/things", "json")
+if thingList is None:
+    print("Failed to get Thing list for user {}, so quitting.  Bye!".format(thingiverseUser))
+    quit()
+
 
 # Create output directory if it doesn't exist
 checkMkDirs(outDir)
 print("Downloading Things to: {}".format(outDir))
-
-
-# Get list of my Things
-# curl -s -X GET -H 'Authorization: Bearer TOKEN' 'https://api.thingiverse.com/users/me/things'
-thingList = getAuthedUrl(apiUrl + "/users/me/things", "json")
-if thingList is None:
-    print("Failed to get Thing list, so quitting.  Bye!")
-    quit()
 
 
 # Dump pretty JSON Thing list to manifest file

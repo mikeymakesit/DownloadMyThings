@@ -1,7 +1,6 @@
 [main]
 AUTH_URL        = https://www.thingiverse.com
 API_URL         = https://api.thingiverse.com
-CLIENT_ID       = 1b0592dcb5966d8142d7
-ACCESS_TOKEN    = the access token issued for the given user
 MANIFEST_FILE   = things.json
 THING_FILE      = thingdata.json
+APP_TOKEN       = the app token issued for your app

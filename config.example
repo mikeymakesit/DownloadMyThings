@@ -1,0 +1,6 @@
+[main]
+AUTH_URL        = https://www.thingiverse.com
+API_URL         = https://api.thingiverse.com
+CLIENT_ID       = your app's client ID
+CLIENT_SECRET   = the secret for your app
+ACCESS_TOKEN    = the access token issued for the given user

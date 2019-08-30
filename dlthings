@@ -49,7 +49,7 @@ def getFiles(thisThing):
         checkMkDirs(destDir)
 
         if os.path.exists(destDir + "/" + fileName):
-            print("-> {} already exists..not downloading".format(destDir + "/" + fileName), flush=True)
+            print("~> {}".format(destDir + "/" + fileName), flush=True)
             continue
 
         # Get the file contents as bytes
@@ -87,7 +87,7 @@ def getPhotos(thisThing):
             continue
 
         if os.path.exists(destDir + "/" + photoName):
-            print("-> {} already exists..not downloading".format(destDir + "/" + photoName), flush=True)
+            print("~> {}".format(destDir + "/" + photoName), flush=True)
             continue
 
         # Get the file contents as bytes
@@ -115,12 +115,11 @@ args = parser.parse_args()
 config = configparser.ConfigParser()
 config.read(CONFIGFILE)
 
-# Script globals
-apiUrl = config['main']['API_URL']
-accessToken = config['main']['ACCESS_TOKEN']
-authHeader = { "Authorization": "Bearer " + accessToken }
-outDir = args.outdir
 
+# Script globals
+outDir = args.outdir
+apiUrl = config['main']['API_URL']
+authHeader = { "Authorization": "Bearer " + config['main']['ACCESS_TOKEN'] }
 
 # Create output directory if it doesn't exist
 checkMkDirs(outDir)

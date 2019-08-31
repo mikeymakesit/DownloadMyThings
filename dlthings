@@ -151,7 +151,7 @@ if thingiverseUser is None:
     quit()
 
 # Get list of my Things
-# curl -s -X GET -H 'Authorization: Bearer TOKEN' 'https://api.thingiverse.com/users/me/things'
+# curl -s -X GET -H 'Authorization: Bearer TOKEN' 'https://api.thingiverse.com/users/username/things'
 print("Getting things for user {}".format(thingiverseUser), flush=True)
 thingList = getAuthedUrl(apiUrl + "/users/" + thingiverseUser + "/things", "json")
 if thingList is None:

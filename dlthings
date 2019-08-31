@@ -5,6 +5,7 @@ import argparse
 import configparser
 import json
 import os
+import re
 import requests
 
 
@@ -13,12 +14,29 @@ CONFIGFILE   = './config'
 
 def getAuthedUrl(thisUrl, outFormat="bytes"):
     """ Fetch a URL and return None if failure, else data in bytes or outFormat format """
+    allData = []
+
     resp = requests.get(thisUrl, headers=authHeader)
     if resp.status_code != 200:
         print("Got code {} for URL {}".format(resp.status_code, thisUrl))
         return None
     if outFormat == "json":
-        return resp.json()
+        allData.extend(resp.json())
+
+    # If paginated, deal with that fun bit
+    # Link: <https://api.thingiverse.com/users/username/things?page=2>; rel="next", <https://api.thingiverse.com/users/username/things>; rel="first", <https://api.thingiverse.com/users/mikeymakesit/things?page=3>; rel="last"
+    if resp.headers.get('Link') is not None:
+        for thisRel in resp.headers.get('Link').split(','):
+            reMatch = re.search(r'<([^>]+)>.+rel="next"', thisRel)
+            if reMatch is not None:
+                nextUrl = reMatch.group(1)
+                print("Getting another page of items...", flush=True)
+                moreItems = getAuthedUrl(nextUrl, "json")
+                allData.extend(moreItems)
+                break
+
+    if outFormat == "json":
+        return allData
     else:
         return resp.content
 
@@ -134,10 +152,12 @@ if thingiverseUser is None:
 
 # Get list of my Things
 # curl -s -X GET -H 'Authorization: Bearer TOKEN' 'https://api.thingiverse.com/users/me/things'
+print("Getting things for user {}".format(thingiverseUser), flush=True)
 thingList = getAuthedUrl(apiUrl + "/users/" + thingiverseUser + "/things", "json")
 if thingList is None:
     print("Failed to get Thing list for user {}, so quitting.  Bye!".format(thingiverseUser))
     quit()
+print("Found {} things".format(len(thingList)), flush=True)
 
 
 # Create output directory if it doesn't exist

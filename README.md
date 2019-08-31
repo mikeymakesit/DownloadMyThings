@@ -38,6 +38,10 @@ optional arguments:
 
 ```
 $ ./dlthings -u mikeymakesit -o /Volumes/home/3D\ Printing/MyThings
+Getting things for user mikeymakesit
+Getting another page of items...
+Getting another page of items...
+Found 72 things
 Downloading Things to: /Volumes/home/3D Printing/MyThings
 3831190
 Wrote Thing metadata
@@ -67,6 +71,9 @@ Done!
 ```
 
 ## Notes
+
+Unpublished Things are not downloaded.  
+You can munge the code to use an OAuth Access Token and authorize your account to the App and then download your unpublished Things if you want.
 
 When you see "~>" it means the object/photo already exists on your system and was not downloaded again.  
 Example of files already downloaded:

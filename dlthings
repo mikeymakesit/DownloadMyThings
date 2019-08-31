@@ -21,7 +21,11 @@ def getAuthedUrl(thisUrl, outFormat="bytes"):
         print("Got code {} for URL {}".format(resp.status_code, thisUrl))
         return None
     if outFormat == "json":
-        allData.extend(resp.json())
+        myJson = resp.json()
+        if type(myJson).__name__ == "list":
+            allData.extend(myJson)
+        else:
+            allData.append(myJson)
 
     # If paginated, deal with that fun bit
     # Link: <https://api.thingiverse.com/users/username/things?page=2>; rel="next", <https://api.thingiverse.com/users/username/things>; rel="first", <https://api.thingiverse.com/users/mikeymakesit/things?page=3>; rel="last"
